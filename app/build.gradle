@@ -1,32 +1,62 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'realm-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 
+apply from: "scripts/config.gradle"
+apply from: "scripts/dependencies.gradle"
+def configuration = ext.configuration
+
+realm {
+    syncEnabled = true
+    kotlinExtensionsEnabled = true
+}
 android {
-    compileSdkVersion 27
+    compileSdkVersion configuration.compileSdkVersion
     defaultConfig {
-        applicationId "com.toldas.sampleapplication"
-        minSdkVersion 23
-        targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        applicationId configuration.applicationId
+        minSdkVersion configuration.minSdkVersion
+        targetSdkVersion configuration.targetSdkVersion
+        versionCode configuration.versionCode
+        versionName configuration.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+    flavorDimensions "client"
+    productFlavors {
+        demo {
+            dimension "client"
+            applicationIdSuffix ".demo"
+        }
+        full {
+            dimension "client"
+            applicationIdSuffix ".full"
         }
     }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
+            applicationIdSuffix ".release"
+        }
+        debug {
+            minifyEnabled false
+            applicationIdSuffix ".debug"
+        }
+
+        applicationVariants.all { variant ->
+            variant.outputs.all {
+                def buildTypeName = variant.buildType.name
+                def flavorTypeName = variant.flavorName
+                outputFileName =
+                        "Sample Application-${flavorTypeName}-${buildTypeName}-v${variant.versionName}(${android.defaultConfig.versionCode}).apk"
+            }
+        }
+    }
+
 }
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-}
+
