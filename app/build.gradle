@@ -3,6 +3,7 @@ apply plugin: 'realm-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'realm-android'
 
 apply from: "scripts/config.gradle"
 apply from: "scripts/dependencies.gradle"
