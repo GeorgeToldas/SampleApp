@@ -2,17 +2,17 @@ package com.toldas.sampleapplication.di.modules
 
 import android.app.Application
 import android.content.Context
-import com.toldas.sampleapplication.di.annotations.ApplicationContext
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
-@Module
-class AppModule {
+
+@Module(includes = [ViewModelModule::class])
+internal class ApplicationModule {
 
     @Provides
-    @ApplicationContext
-    internal fun provideContext(application: Application): Context {
+    @Singleton
+    fun provideContext(application: Application): Context {
         return application
     }
-
 }

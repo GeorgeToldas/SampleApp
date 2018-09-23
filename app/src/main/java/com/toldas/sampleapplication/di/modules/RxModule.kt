@@ -7,7 +7,7 @@ import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
 
 @Module
-object RxModule {
+class RxModule {
 
     @Provides
     internal fun provideCompositeDisposable() = CompositeDisposable()

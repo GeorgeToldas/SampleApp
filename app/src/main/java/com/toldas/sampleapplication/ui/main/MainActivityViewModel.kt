@@ -1,38 +1,45 @@
 package com.toldas.sampleapplication.ui.main
 
-import android.app.Application
-import android.location.Location
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import com.toldas.sampleapplication.data.ApiService
+import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.rx.callback.SingleCallbackObserver
+import com.toldas.sampleapplication.rx.schedulers.SchedulerProvider
 import com.toldas.sampleapplication.ui.base.BaseViewModel
+import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
-class MainActivityViewModel(application: Application) : BaseViewModel(application) {
+class MainActivityViewModel
+@Inject constructor(
+        private val apiService: ApiService,
+        private val subscription: CompositeDisposable,
+        private val schedulers: SchedulerProvider
+) : BaseViewModel(apiService, subscription, schedulers) {
+
+    private val locationList: MutableLiveData<ArrayList<MapLocation>> = MutableLiveData()
 
     init {
         loadLocations()
     }
 
     private fun loadLocations() {
-        subscription.add(apiService.getLocations()
+        subscription.add(apiService
+                .getLocations()
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
-                .subscribeWith(object : SingleCallbackObserver<ArrayList<Location>>() {
-                    override fun onResponse(response: ArrayList<Location>) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                .subscribeWith(object : SingleCallbackObserver<ArrayList<MapLocation>>() {
+                    override fun onResponse(response: ArrayList<MapLocation>) {
+                        locationList.value = response
                     }
 
                     override fun onFailure(message: String) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
                     }
                 }))
     }
 
-    private fun filterLocations() {
-
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        subscription.clear()
-        subscription.dispose()
+    fun getLocationList(): LiveData<ArrayList<MapLocation>> {
+        return locationList
     }
 }

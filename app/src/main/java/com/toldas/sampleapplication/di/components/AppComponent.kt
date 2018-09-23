@@ -3,25 +3,32 @@ package com.toldas.sampleapplication.di.components
 import android.app.Application
 import com.toldas.sampleapplication.SampleApp
 import com.toldas.sampleapplication.data.ApiService
-import com.toldas.sampleapplication.di.modules.ApiModule
-import com.toldas.sampleapplication.di.modules.AppModule
+import com.toldas.sampleapplication.di.modules.ActivityBuilderModule
+import com.toldas.sampleapplication.di.modules.ApplicationModule
+import com.toldas.sampleapplication.di.modules.NetworkModule
+import com.toldas.sampleapplication.di.modules.RxModule
 import dagger.BindsInstance
 import dagger.Component
+import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, ApiModule::class])
+@Component(modules =
+[
+    AndroidSupportInjectionModule::class,
+    NetworkModule::class,
+    RxModule::class,
+    ApplicationModule::class,
+    ActivityBuilderModule::class
+])
 interface AppComponent {
 
     fun inject(app: SampleApp)
-
-    fun apiService(): ApiService
 
     @Component.Builder
     interface Builder {
         @BindsInstance
         fun application(application: Application): Builder
-        fun api(apiModule: ApiModule): Builder
 
         fun build(): AppComponent
     }

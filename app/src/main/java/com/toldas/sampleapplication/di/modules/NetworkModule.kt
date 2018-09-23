@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
-object ApiModule {
+class NetworkModule {
 
     @Provides
     @Singleton
@@ -25,8 +25,9 @@ object ApiModule {
 
     @Provides
     @Singleton
-    internal fun provideOkHttpClient(): OkHttpClient {
+    internal fun provideOkHttpClient(cache: Cache): OkHttpClient {
         return OkHttpClient.Builder()
+                .cache(cache)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .build()
