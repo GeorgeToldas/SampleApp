@@ -8,6 +8,8 @@ import com.toldas.sampleapplication.di.components.DaggerAppComponent
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import javax.inject.Inject
 
 class SampleApp : Application(), HasActivityInjector {
@@ -25,6 +27,11 @@ class SampleApp : Application(), HasActivityInjector {
     override fun onCreate() {
         super.onCreate()
         appComponent.inject(this)
+        Realm.init(this)
+        Realm.setDefaultConfiguration(RealmConfiguration.Builder()
+                .schemaVersion(1)
+                .deleteRealmIfMigrationNeeded()
+                .build())
         ApplicationInjector.initialize(this)
     }
 

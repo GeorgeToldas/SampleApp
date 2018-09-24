@@ -4,12 +4,12 @@ import android.os.Parcel
 import android.os.Parcelable
 import io.realm.RealmObject
 
-data class MapLocation(
-        var latitude: Double,
-        var longitude: Double,
-        var address: String,
-        var label: String,
-        var distance: Float
+open class MapLocation(
+        var latitude: Double = 0.0,
+        var longitude: Double = 0.0,
+        var address: String = "",
+        var label: String = "",
+        var distance: Float = 0.0f
 ) : RealmObject(), Parcelable {
 
     constructor(parcel: Parcel) : this(

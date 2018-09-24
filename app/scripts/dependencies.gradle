@@ -32,9 +32,6 @@ dependencies {
     //View Model
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
 
-    //Data Binding
-    kapt "com.android.databinding:compiler:3.1.4"
-
     //Google Maps
     implementation 'com.google.android.gms:play-services-location:15.0.1'
 

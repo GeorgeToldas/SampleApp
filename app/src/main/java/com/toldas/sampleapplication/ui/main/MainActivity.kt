@@ -17,7 +17,9 @@ import com.toldas.sampleapplication.R
 import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.databinding.ActivityMainBinding
 import com.toldas.sampleapplication.ui.base.BaseActivity
+import com.toldas.sampleapplication.ui.listeners.ItemClickListener
 import com.toldas.sampleapplication.utils.PermissionUtils
+import io.realm.RealmResults
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -34,6 +36,8 @@ class MainActivity : BaseActivity() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var currentLocation: Location
 
+    private lateinit var adapter: LocationAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -41,25 +45,34 @@ class MainActivity : BaseActivity() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainActivityViewModel::class.java)
         binding.viewModel = viewModel
 
-        setUp()
+        initLocationServices()
+        initAdapter()
     }
 
-    private fun setUp() {
-        hasLocationPermission = PermissionUtils.checkLocationSettings(this)
-        viewModel.getLocationList().observe(this, Observer<ArrayList<MapLocation>> { showLocationList() })
+    private fun initLocationServices() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 currentLocation = locationResult.lastLocation
                 viewModel.updateLocationList(currentLocation.latitude, currentLocation.longitude)
             }
         }
+        hasLocationPermission = PermissionUtils.checkLocationSettings(this)
         if (hasLocationPermission) {
             setLocationProvider()
         }
     }
 
-    private fun showLocationList() {
+    private fun initAdapter() {
         binding.locationRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val onClickListener = object : ItemClickListener<MapLocation> {
+            override fun onClick(item: MapLocation) {
+
+            }
+        }
+        adapter = LocationAdapter(onClickListener)
+        viewModel.getLocationList().observe(this, Observer<RealmResults<MapLocation>> { locations -> adapter.setList(locations) })
+
+
     }
 
     @SuppressLint("MissingPermission")

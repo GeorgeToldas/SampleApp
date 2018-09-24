@@ -1,14 +1,15 @@
 package com.toldas.sampleapplication.ui.main
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import com.toldas.sampleapplication.data.api.ApiService
 import com.toldas.sampleapplication.data.model.MapLocation
+import com.toldas.sampleapplication.db.locationModel
 import com.toldas.sampleapplication.rx.callback.SingleCallbackObserver
 import com.toldas.sampleapplication.rx.schedulers.SchedulerProvider
 import com.toldas.sampleapplication.ui.base.BaseViewModel
-import com.toldas.sampleapplication.utils.LocationUtils
 import io.reactivex.disposables.CompositeDisposable
+import io.realm.Realm
+import io.realm.RealmResults
 import javax.inject.Inject
 
 class MainActivityViewModel
@@ -18,10 +19,15 @@ class MainActivityViewModel
         private val schedulers: SchedulerProvider
 ) : BaseViewModel(apiService, subscription, schedulers) {
 
-    private val locationList: MutableLiveData<ArrayList<MapLocation>> = MutableLiveData()
+    private val realmDb = Realm.getDefaultInstance()
+
+    private var locationList: LiveData<RealmResults<MapLocation>>
 
     init {
-        loadLocations()
+        locationList = realmDb.locationModel().getLocations()
+        if (realmDb.isEmpty) {
+            loadLocations()
+        }
     }
 
     private fun loadLocations() {
@@ -31,7 +37,8 @@ class MainActivityViewModel
                 .observeOn(schedulers.ui())
                 .subscribeWith(object : SingleCallbackObserver<ArrayList<MapLocation>>() {
                     override fun onResponse(response: ArrayList<MapLocation>) {
-                        locationList.value = response
+                        realmDb.locationModel().insertLocations(response)
+                        locationList = realmDb.locationModel().getLocations()
                     }
 
                     override fun onFailure(message: String) {
@@ -41,17 +48,10 @@ class MainActivityViewModel
     }
 
     fun updateLocationList(latitude: Double, longitude: Double) {
-        val mapLocations = locationList.value
-        val iterator = mapLocations?.listIterator()
-        while (iterator?.hasNext() == true) {
-            val mapLocation = iterator.next()
-            mapLocation.distance = LocationUtils.setDistance(mapLocation, latitude, longitude)
-        }
-        locationList.value = mapLocations
-
+        realmDb.locationModel().updateLocationDistance(latitude, longitude)
     }
 
-    fun getLocationList(): LiveData<ArrayList<MapLocation>> {
+    fun getLocationList(): LiveData<RealmResults<MapLocation>> {
         return locationList
     }
 }
