@@ -7,6 +7,7 @@ import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.rx.callback.SingleCallbackObserver
 import com.toldas.sampleapplication.rx.schedulers.SchedulerProvider
 import com.toldas.sampleapplication.ui.base.BaseViewModel
+import com.toldas.sampleapplication.utils.LocationUtils
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
@@ -37,6 +38,17 @@ class MainActivityViewModel
 
                     }
                 }))
+    }
+
+    fun updateLocationList(latitude: Double, longitude: Double) {
+        val mapLocations = locationList.value
+        val iterator = mapLocations?.listIterator()
+        while (iterator?.hasNext() == true) {
+            val mapLocation = iterator.next()
+            mapLocation.distance = LocationUtils.setDistance(mapLocation, latitude, longitude)
+        }
+        locationList.value = mapLocations
+
     }
 
     fun getLocationList(): LiveData<ArrayList<MapLocation>> {

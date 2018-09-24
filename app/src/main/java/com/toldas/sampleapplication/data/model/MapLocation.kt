@@ -5,11 +5,11 @@ import android.os.Parcelable
 import io.realm.RealmObject
 
 data class MapLocation(
-        val latitude: Double,
-        val longitude: Double,
-        val address: String,
-        val label: String,
-        val distance: Double
+        var latitude: Double,
+        var longitude: Double,
+        var address: String,
+        var label: String,
+        var distance: Float
 ) : RealmObject(), Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -17,7 +17,7 @@ data class MapLocation(
             parcel.readDouble(),
             parcel.readString(),
             parcel.readString(),
-            parcel.readDouble()
+            parcel.readFloat()
     )
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
@@ -25,7 +25,7 @@ data class MapLocation(
         dest.writeDouble(longitude)
         dest.writeString(address)
         dest.writeString(label)
-        dest.writeDouble(distance)
+        dest.writeFloat(distance)
     }
 
     override fun describeContents(): Int {
