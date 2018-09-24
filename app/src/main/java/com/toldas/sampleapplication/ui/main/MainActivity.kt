@@ -41,7 +41,6 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainActivityViewModel::class.java)
         binding.viewModel = viewModel
 
@@ -70,6 +69,7 @@ class MainActivity : BaseActivity() {
             }
         }
         adapter = LocationAdapter(onClickListener)
+        binding.locationRecyclerView.adapter = adapter
         viewModel.getLocationList().observe(this, Observer<RealmResults<MapLocation>> { locations -> adapter.setList(locations) })
 
 

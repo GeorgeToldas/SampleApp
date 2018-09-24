@@ -1,6 +1,8 @@
 package com.toldas.sampleapplication.ui.main
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.view.View
 import com.toldas.sampleapplication.data.api.ApiService
 import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.db.locationModel
@@ -22,9 +24,12 @@ class MainActivityViewModel
     private val realmDb = Realm.getDefaultInstance()
 
     private var locationList: LiveData<RealmResults<MapLocation>>
+    val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
 
     init {
+        onListLoadStart()
         locationList = realmDb.locationModel().getLocations()
+        onListLoadFinish()
         if (realmDb.isEmpty) {
             loadLocations()
         }
@@ -35,6 +40,8 @@ class MainActivityViewModel
                 .getLocations()
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
+                .doOnSubscribe { onListLoadStart() }
+                .doAfterTerminate { onListLoadFinish() }
                 .subscribeWith(object : SingleCallbackObserver<ArrayList<MapLocation>>() {
                     override fun onResponse(response: ArrayList<MapLocation>) {
                         realmDb.locationModel().insertLocations(response)
@@ -45,6 +52,14 @@ class MainActivityViewModel
 
                     }
                 }))
+    }
+
+    private fun onListLoadStart() {
+        loadingVisibility.value = View.VISIBLE
+    }
+
+    private fun onListLoadFinish() {
+        loadingVisibility.value = View.GONE
     }
 
     fun updateLocationList(latitude: Double, longitude: Double) {

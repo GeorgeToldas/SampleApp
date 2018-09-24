@@ -9,8 +9,12 @@
     </data>
 
     <android.support.v7.widget.CardView
+        android:layout_margin="20dp"
+        app:cardBackgroundColor="@android:color/background_dark"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:elevation="10dp"
+        app:cardCornerRadius="20dp"
         >
 
     </android.support.v7.widget.CardView>
