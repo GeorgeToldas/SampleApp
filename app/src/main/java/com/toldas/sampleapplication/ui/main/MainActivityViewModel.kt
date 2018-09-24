@@ -2,7 +2,7 @@ package com.toldas.sampleapplication.ui.main
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import com.toldas.sampleapplication.data.ApiService
+import com.toldas.sampleapplication.data.api.ApiService
 import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.rx.callback.SingleCallbackObserver
 import com.toldas.sampleapplication.rx.schedulers.SchedulerProvider

@@ -2,12 +2,7 @@ package com.toldas.sampleapplication.ui.main
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import com.toldas.sampleapplication.data.ApiService
 import com.toldas.sampleapplication.data.model.MapLocation
-import com.toldas.sampleapplication.rx.schedulers.SchedulerProvider
-import com.toldas.sampleapplication.ui.base.BaseViewModel
-import io.reactivex.disposables.CompositeDisposable
-import javax.inject.Inject
 
 class LocationItemViewModel : ViewModel(){
 

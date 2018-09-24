@@ -2,7 +2,6 @@ package com.toldas.sampleapplication.di.components
 
 import android.app.Application
 import com.toldas.sampleapplication.SampleApp
-import com.toldas.sampleapplication.data.ApiService
 import com.toldas.sampleapplication.di.modules.ActivityBuilderModule
 import com.toldas.sampleapplication.di.modules.ApplicationModule
 import com.toldas.sampleapplication.di.modules.NetworkModule

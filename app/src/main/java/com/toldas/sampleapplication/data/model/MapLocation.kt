@@ -8,14 +8,16 @@ data class MapLocation(
         val latitude: Double,
         val longitude: Double,
         val address: String,
-        val label: String
+        val label: String,
+        val distance: Double
 ) : RealmObject(), Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readDouble(),
             parcel.readDouble(),
             parcel.readString(),
-            parcel.readString()
+            parcel.readString(),
+            parcel.readDouble()
     )
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
@@ -23,6 +25,7 @@ data class MapLocation(
         dest.writeDouble(longitude)
         dest.writeString(address)
         dest.writeString(label)
+        dest.writeDouble(distance)
     }
 
     override fun describeContents(): Int {

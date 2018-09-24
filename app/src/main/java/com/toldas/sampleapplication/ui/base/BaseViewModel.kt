@@ -1,7 +1,7 @@
 package com.toldas.sampleapplication.ui.base
 
 import android.arch.lifecycle.ViewModel
-import com.toldas.sampleapplication.data.ApiService
+import com.toldas.sampleapplication.data.api.ApiService
 import com.toldas.sampleapplication.rx.schedulers.SchedulerProvider
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject

@@ -1,7 +1,7 @@
 package com.toldas.sampleapplication.di.modules
 
 import android.app.Application
-import com.toldas.sampleapplication.data.ApiService
+import com.toldas.sampleapplication.data.api.ApiService
 import com.toldas.sampleapplication.utils.Constants
 import dagger.Module
 import dagger.Provides

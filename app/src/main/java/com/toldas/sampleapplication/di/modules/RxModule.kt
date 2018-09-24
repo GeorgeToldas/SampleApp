@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
 
+@Suppress("Unused")
 @Module
 class RxModule {
 
