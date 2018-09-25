@@ -1,4 +1,4 @@
-package com.toldas.sampleapplication.ui.edit
+package com.toldas.sampleapplication.ui.create
 
 
 import android.annotation.SuppressLint
@@ -24,21 +24,21 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jakewharton.rxbinding2.view.RxView
 import com.toldas.sampleapplication.R
-import com.toldas.sampleapplication.data.model.MapLocation
-import com.toldas.sampleapplication.databinding.FragmentEditBinding
+import com.toldas.sampleapplication.databinding.FragmentCreateBinding
+
 import com.toldas.sampleapplication.ui.base.BaseDialogFragment
 import com.toldas.sampleapplication.utils.PermissionUtils
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
 
-class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
+class CreateFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var binding: FragmentEditBinding
-    private lateinit var viewModel: EditViewModel
+    private lateinit var binding: FragmentCreateBinding
+    private lateinit var viewModel: CreateViewModel
     private var googleMap: GoogleMap? = null
     private var currentMarker: Marker? = null
 
@@ -49,15 +49,18 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
     private var currentLocation: Location? = null
 
     companion object {
-        private const val OBJECT = "ID"
+        private const val LATITUDE = "LATITUDE"
+        private const val LONGITUDE = "LONGITUDE"
     }
 
-    private lateinit var mapLocation: MapLocation
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
 
-    internal fun newInstance(mapLocation: MapLocation): EditFragment {
-        val fragment = EditFragment()
+    internal fun newInstance(latitude: Double, longitude: Double): CreateFragment {
+        val fragment = CreateFragment()
         val args = Bundle()
-        args.putParcelable(OBJECT, mapLocation)
+        args.putDouble(LATITUDE, latitude)
+        args.putDouble(LONGITUDE, longitude)
         fragment.arguments = args
         return fragment
     }
@@ -65,26 +68,25 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            mapLocation = arguments!!.getParcelable(OBJECT)
+            latitude = arguments!!.getDouble(LATITUDE)
+            longitude = arguments!!.getDouble(LONGITUDE)
         }
         setStyle(STYLE_NO_FRAME, android.R.style.Theme_Holo_Light)
     }
 
-    @SuppressLint("CheckResult")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit, container, false)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditViewModel::class.java)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_create, container, false)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CreateViewModel::class.java)
         binding.viewModel = viewModel
         binding.setLifecycleOwner(this)
-        viewModel.bind(mapLocation)
+        viewModel.bind(latitude, longitude)
         binding.mapView.onCreate(savedInstanceState)
         binding.mapView.getMapAsync(this)
 
         return binding.root
     }
-
 
     @SuppressLint("CheckResult")
     override fun setUp() {
@@ -95,13 +97,15 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         viewModel.getLabel().observe(this, Observer<String> { currentMarker?.title = viewModel.getLabel().value })
         viewModel.getAddress().observe(this, Observer<String> { currentMarker?.snippet = viewModel.getAddress().value })
 
+        viewModel.updateAddress(getAddressFromLocation(latitude,longitude))
+
         RxView.clicks(binding.closeButton)
                 .subscribe { dialog.dismiss() }
 
-        RxView.clicks(binding.editButton)
+        RxView.clicks(binding.createButton)
                 .subscribe {
                     run {
-                        viewModel.updateLocation()
+                        viewModel.saveLocation()
                         dismiss()
                     }
                 }
@@ -157,10 +161,10 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         googleMap?.isIndoorEnabled = true
         googleMap?.setOnMapClickListener(this)
         currentMarker = googleMap?.addMarker(MarkerOptions()
-                .position(LatLng(mapLocation.latitude, mapLocation.longitude))
-                .title(mapLocation.label)
-                .snippet(mapLocation.address))
-        moveCamera(mapLocation.latitude, mapLocation.longitude)
+                .position(LatLng(latitude, longitude))
+                .title(viewModel.getLabel().value)
+                .snippet(viewModel.getAddress().value))
+        moveCamera(latitude, longitude)
     }
 
     private fun moveCamera(latitude: Double, longitude: Double) {

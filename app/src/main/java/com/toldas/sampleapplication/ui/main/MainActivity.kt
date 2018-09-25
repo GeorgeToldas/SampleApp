@@ -14,14 +14,18 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import com.google.android.gms.location.*
+import com.jakewharton.rxbinding2.view.RxView
 import com.toldas.sampleapplication.R
 import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.databinding.ActivityMainBinding
 import com.toldas.sampleapplication.ui.base.BaseActivity
+import com.toldas.sampleapplication.ui.create.CreateFragment
+import com.toldas.sampleapplication.ui.details.DetailsFragment
 import com.toldas.sampleapplication.ui.edit.EditFragment
 import com.toldas.sampleapplication.ui.listeners.ItemClickListener
 import com.toldas.sampleapplication.utils.PermissionUtils
 import io.realm.RealmResults
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -36,10 +40,11 @@ class MainActivity : BaseActivity() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-    private lateinit var currentLocation: Location
+    private var currentLocation: Location? = null
 
     private lateinit var adapter: LocationAdapter
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -48,13 +53,21 @@ class MainActivity : BaseActivity() {
 
         initLocationServices()
         initAdapter()
+
+        RxView.clicks(createButton)
+                .filter { currentLocation != null }
+                .subscribe {
+                    val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+                    val fragment = CreateFragment().newInstance(currentLocation!!.latitude, currentLocation!!.longitude)
+                    fragment.show(transaction, "ADD")
+                }
     }
 
     private fun initLocationServices() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 currentLocation = locationResult.lastLocation
-                viewModel.updateLocationList(currentLocation.latitude, currentLocation.longitude)
+                viewModel.updateLocationList(currentLocation!!.latitude, currentLocation!!.longitude)
             }
         }
         hasLocationPermission = PermissionUtils.checkLocationSettings(this)
@@ -67,7 +80,11 @@ class MainActivity : BaseActivity() {
         binding.locationRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         val onClickListener = object : ItemClickListener<MapLocation> {
             override fun onItemClick(item: MapLocation) {
-
+                if (currentLocation != null) {
+                    val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+                    val fragment = DetailsFragment().newInstance(item, currentLocation!!.latitude, currentLocation!!.longitude)
+                    fragment.show(transaction, "DETAILS")
+                }
             }
 
             override fun onDeleteClick(item: MapLocation) {

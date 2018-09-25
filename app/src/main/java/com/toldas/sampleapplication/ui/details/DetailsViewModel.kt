@@ -1,5 +1,6 @@
-package com.toldas.sampleapplication.ui.edit
+package com.toldas.sampleapplication.ui.details
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.text.Editable
 import com.toldas.sampleapplication.data.api.ApiService
@@ -10,9 +11,11 @@ import com.toldas.sampleapplication.ui.base.BaseViewModel
 import com.toldas.sampleapplication.utils.LocationUtils
 import io.reactivex.disposables.CompositeDisposable
 import io.realm.Realm
+import io.realm.RealmResults
 import javax.inject.Inject
 
-class EditViewModel
+
+class DetailsViewModel
 @Inject constructor(
         apiService: ApiService,
         subscription: CompositeDisposable,
@@ -20,6 +23,8 @@ class EditViewModel
 ) : BaseViewModel(apiService, subscription, schedulers) {
 
     private val realmDb = Realm.getDefaultInstance()
+
+    private var locationList: LiveData<RealmResults<MapLocation>>
 
     private val id = MutableLiveData<Long>()
     private val latitude = MutableLiveData<Double>()
@@ -37,6 +42,11 @@ class EditViewModel
         distance.value = mapLocation.distance
     }
 
+    init {
+        locationList = realmDb.locationModel().getLocations()
+    }
+
+
     fun updateCurrentDistance(latitude: Double, longitude: Double) {
         distance.value = LocationUtils.setDistance(this.latitude.value!!, this.longitude.value!!, latitude, longitude)
     }
@@ -47,17 +57,8 @@ class EditViewModel
         updateCurrentDistance(currentLatitude, currentLongitude)
     }
 
-    fun updateLocation() {
-        realmDb.locationModel().updateItem(
-                id.value!!, latitude.value!!, longitude.value!!, label.value!!, address.value!!, distance.value!!)
-    }
-
     fun updateLabel(text: Editable) {
         label.value = text.toString()
-    }
-
-    fun updateAddress(text: String) {
-        address.value = text
     }
 
     fun getLatitude(): MutableLiveData<Double> {
@@ -78,5 +79,9 @@ class EditViewModel
 
     fun getDistance(): MutableLiveData<Float> {
         return distance
+    }
+
+    fun getLocationList(): LiveData<RealmResults<MapLocation>> {
+        return locationList
     }
 }

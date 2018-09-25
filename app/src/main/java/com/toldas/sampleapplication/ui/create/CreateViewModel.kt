@@ -1,18 +1,18 @@
-package com.toldas.sampleapplication.ui.edit
+package com.toldas.sampleapplication.ui.create
 
 import android.arch.lifecycle.MutableLiveData
 import android.text.Editable
 import com.toldas.sampleapplication.data.api.ApiService
-import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.db.locationModel
 import com.toldas.sampleapplication.rx.schedulers.SchedulerProvider
 import com.toldas.sampleapplication.ui.base.BaseViewModel
 import com.toldas.sampleapplication.utils.LocationUtils
 import io.reactivex.disposables.CompositeDisposable
 import io.realm.Realm
+import java.util.*
 import javax.inject.Inject
 
-class EditViewModel
+class CreateViewModel
 @Inject constructor(
         apiService: ApiService,
         subscription: CompositeDisposable,
@@ -21,20 +21,18 @@ class EditViewModel
 
     private val realmDb = Realm.getDefaultInstance()
 
-    private val id = MutableLiveData<Long>()
     private val latitude = MutableLiveData<Double>()
     private val longitude = MutableLiveData<Double>()
     private val address = MutableLiveData<String>()
     private val label = MutableLiveData<String>()
     private val distance = MutableLiveData<Float>()
 
-    fun bind(mapLocation: MapLocation) {
-        id.value = mapLocation.id
-        latitude.value = mapLocation.latitude
-        longitude.value = mapLocation.longitude
-        address.value = mapLocation.address
-        label.value = mapLocation.label
-        distance.value = mapLocation.distance
+    fun bind(latitude: Double, longitude: Double) {
+        this.latitude.value = latitude
+        this.longitude.value = longitude
+        address.value = ""
+        label.value = ""
+        distance.value = 0.0f
     }
 
     fun updateCurrentDistance(latitude: Double, longitude: Double) {
@@ -47,9 +45,15 @@ class EditViewModel
         updateCurrentDistance(currentLatitude, currentLongitude)
     }
 
-    fun updateLocation() {
-        realmDb.locationModel().updateItem(
-                id.value!!, latitude.value!!, longitude.value!!, label.value!!, address.value!!, distance.value!!)
+    fun saveLocation() {
+        realmDb.locationModel().addLocation(
+                UUID.randomUUID().mostSignificantBits,
+                latitude.value!!,
+                longitude.value!!,
+                label.value!!,
+                address.value!!,
+                distance.value!!
+        )
     }
 
     fun updateLabel(text: Editable) {

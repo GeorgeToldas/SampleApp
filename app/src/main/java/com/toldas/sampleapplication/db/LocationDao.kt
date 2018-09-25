@@ -27,6 +27,25 @@ class LocationDao(val realm: Realm) {
                 }
     }
 
+    fun addLocation(
+            id: Long,
+            latitude: Double,
+            longitude: Double,
+            label: String,
+            address: String,
+            distance: Float
+    ) {
+        Realm.getInstance(realm.configuration)
+                .executeTransaction { realm ->
+                    val realmObject = realm.createObject(MapLocation::class.java, id)
+                    realmObject.latitude = latitude
+                    realmObject.longitude = longitude
+                    realmObject.label = label
+                    realmObject.address = address
+                    realmObject.distance = distance
+                }
+    }
+
     fun insertLocations(list: List<MapLocation>) {
         Realm.getInstance(realm.configuration)
                 .executeTransaction { realm ->

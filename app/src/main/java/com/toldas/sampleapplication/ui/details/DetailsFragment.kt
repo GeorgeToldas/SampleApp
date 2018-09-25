@@ -1,4 +1,4 @@
-package com.toldas.sampleapplication.ui.edit
+package com.toldas.sampleapplication.ui.details
 
 
 import android.annotation.SuppressLint
@@ -6,14 +6,10 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
-import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapsInitializer
@@ -25,39 +21,37 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.jakewharton.rxbinding2.view.RxView
 import com.toldas.sampleapplication.R
 import com.toldas.sampleapplication.data.model.MapLocation
-import com.toldas.sampleapplication.databinding.FragmentEditBinding
+import com.toldas.sampleapplication.databinding.FragmentDetailsBinding
+
 import com.toldas.sampleapplication.ui.base.BaseDialogFragment
-import com.toldas.sampleapplication.utils.PermissionUtils
-import java.io.IOException
-import java.util.*
+import io.realm.RealmResults
 import javax.inject.Inject
 
-class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
+class DetailsFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var binding: FragmentEditBinding
-    private lateinit var viewModel: EditViewModel
+    private lateinit var binding: FragmentDetailsBinding
+    private lateinit var viewModel: DetailsViewModel
     private var googleMap: GoogleMap? = null
-    private var currentMarker: Marker? = null
-
-    private var hasLocationPermission: Boolean = false
-    private lateinit var locationRequest: LocationRequest
-    private lateinit var locationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
-    private var currentLocation: Location? = null
 
     companion object {
         private const val OBJECT = "ID"
+        private const val LATITUDE = "LATITUDE"
+        private const val LONGITUDE = "LONGITUDE"
     }
 
     private lateinit var mapLocation: MapLocation
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
 
-    internal fun newInstance(mapLocation: MapLocation): EditFragment {
-        val fragment = EditFragment()
+    internal fun newInstance(mapLocation: MapLocation, latitude: Double, longitude: Double): DetailsFragment {
+        val fragment = DetailsFragment()
         val args = Bundle()
         args.putParcelable(OBJECT, mapLocation)
+        args.putDouble(LATITUDE, latitude)
+        args.putDouble(LONGITUDE, longitude)
         fragment.arguments = args
         return fragment
     }
@@ -66,16 +60,17 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             mapLocation = arguments!!.getParcelable(OBJECT)
+            latitude = arguments!!.getDouble(LATITUDE)
+            longitude = arguments!!.getDouble(LONGITUDE)
         }
         setStyle(STYLE_NO_FRAME, android.R.style.Theme_Holo_Light)
     }
 
-    @SuppressLint("CheckResult")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit, container, false)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditViewModel::class.java)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_details, container, false)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
         binding.viewModel = viewModel
         binding.setLifecycleOwner(this)
         viewModel.bind(mapLocation)
@@ -85,69 +80,18 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         return binding.root
     }
 
-
     @SuppressLint("CheckResult")
     override fun setUp() {
-        initLocationServices()
         viewModel.getDistance().observe(this, Observer<Float> { })
         viewModel.getLatitude().observe(this, Observer<Double> { })
         viewModel.getLongitude().observe(this, Observer<Double> { })
-        viewModel.getLabel().observe(this, Observer<String> { currentMarker?.title = viewModel.getLabel().value })
-        viewModel.getAddress().observe(this, Observer<String> { currentMarker?.snippet = viewModel.getAddress().value })
+        viewModel.getLabel().observe(this, Observer<String> { })
+        viewModel.getAddress().observe(this, Observer<String> { })
+        viewModel.getLocationList().observe(this, Observer<RealmResults<MapLocation>> { locations -> addMarkers(locations) })
+
 
         RxView.clicks(binding.closeButton)
                 .subscribe { dialog.dismiss() }
-
-        RxView.clicks(binding.editButton)
-                .subscribe {
-                    run {
-                        viewModel.updateLocation()
-                        dismiss()
-                    }
-                }
-    }
-
-    private fun getAddressFromLocation(latitude: Double, longitude: Double): String {
-        try {
-            val geoCoder = Geocoder(this.activity, Locale.ENGLISH)
-            val addresses = geoCoder.getFromLocation(latitude, longitude, 1)
-            if (addresses.size > 0) {
-                val address = addresses[0]
-                val streetAddress = StringBuilder()
-                for (i in 0..address.maxAddressLineIndex) {
-                    streetAddress.append(address.getAddressLine(i) + " ")
-                }
-                return streetAddress.toString()
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        return ""
-    }
-
-    private fun initLocationServices() {
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                currentLocation = locationResult.lastLocation
-                viewModel.updateCurrentDistance(currentLocation!!.latitude, currentLocation!!.longitude)
-            }
-        }
-        hasLocationPermission = PermissionUtils.checkLocationSettings(context!!)
-        if (hasLocationPermission) {
-            setLocationProvider()
-        }
-        viewModel.getDistance().observe(this, Observer<Float> {})
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun setLocationProvider() {
-        locationClient = LocationServices.getFusedLocationProviderClient(context!!)
-        locationRequest = LocationRequest.create()
-                .setInterval(60000)
-                .setFastestInterval(60000)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-        locationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
@@ -155,12 +99,22 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         this.googleMap = googleMap
         googleMap?.isBuildingsEnabled = true
         googleMap?.isIndoorEnabled = true
-        googleMap?.setOnMapClickListener(this)
-        currentMarker = googleMap?.addMarker(MarkerOptions()
+        googleMap?.setOnMarkerClickListener(this)
+        googleMap?.addMarker(MarkerOptions()
                 .position(LatLng(mapLocation.latitude, mapLocation.longitude))
                 .title(mapLocation.label)
                 .snippet(mapLocation.address))
         moveCamera(mapLocation.latitude, mapLocation.longitude)
+    }
+
+    private fun addMarkers(locations: List<MapLocation>?) {
+        for (location in locations!!) {
+            googleMap?.addMarker(MarkerOptions()
+                    .position(LatLng(location.latitude, location.longitude))
+                    .title(location.label)
+                    .snippet(location.address))
+                    ?.tag = location.id
+        }
     }
 
     private fun moveCamera(latitude: Double, longitude: Double) {
@@ -176,14 +130,14 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
-    override fun onMapClick(point: LatLng?) {
-        if (currentLocation == null) {
-            return
-        }
-        viewModel.updateLocation(point!!.latitude, point.longitude, currentLocation!!.latitude, currentLocation!!.longitude)
-        currentMarker?.position = LatLng(point.latitude, point.longitude)
-        moveCamera(point.latitude, point.longitude)
-        viewModel.updateAddress(getAddressFromLocation(point.latitude, point.longitude))
+    override fun onMarkerClick(marker: Marker?): Boolean {
+        viewModel.updateLocation(
+                marker!!.position.latitude, marker.position.longitude, latitude, longitude)
+        viewModel.getLabel().value = marker.title
+        viewModel.getAddress().value = marker.snippet
+        viewModel.updateCurrentDistance(latitude, longitude)
+        moveCamera(marker.position.latitude,marker.position.longitude)
+        return false
     }
 
     override fun onStart() {
