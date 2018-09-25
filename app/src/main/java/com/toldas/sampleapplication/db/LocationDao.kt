@@ -22,10 +22,9 @@ class LocationDao(val realm: Realm) {
                 .executeTransaction { realm ->
                     val realmData = realm.where(MapLocation::class.java).findAllAsync()
                     for (realmObject in realmData) {
-                        realmObject.distance = LocationUtils.setDistance(realmObject, latitude, longitude)
+                        realmObject.distance = LocationUtils.setDistance(realmObject.latitude,realmObject.longitude, latitude, longitude)
                     }
                 }
-
     }
 
     fun removeLocation(id: Long) {

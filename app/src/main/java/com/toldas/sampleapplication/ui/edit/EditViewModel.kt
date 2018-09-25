@@ -5,15 +5,16 @@ import com.toldas.sampleapplication.data.api.ApiService
 import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.rx.schedulers.SchedulerProvider
 import com.toldas.sampleapplication.ui.base.BaseViewModel
+import com.toldas.sampleapplication.utils.LocationUtils
 import io.reactivex.disposables.CompositeDisposable
 import io.realm.Realm
 import javax.inject.Inject
 
 class EditViewModel
 @Inject constructor(
-        private val apiService: ApiService,
-        private val subscription: CompositeDisposable,
-        private val schedulers: SchedulerProvider
+        apiService: ApiService,
+        subscription: CompositeDisposable,
+        schedulers: SchedulerProvider
 ) : BaseViewModel(apiService, subscription, schedulers) {
 
     private val realmDb = Realm.getDefaultInstance()
@@ -32,5 +33,35 @@ class EditViewModel
         address.value = mapLocation.address
         label.value = mapLocation.label
         distance.value = mapLocation.distance
+    }
+
+    fun updateCurrentDistance(latitude: Double, longitude: Double) {
+        distance.value = LocationUtils.setDistance(this.latitude.value!!, this.longitude.value!!, latitude, longitude)
+    }
+
+    fun updateLocation(latitude: Double, longitude: Double, currentLatitude: Double, currentLongitude: Double) {
+        this.latitude.value = latitude
+        this.longitude.value = longitude
+        updateCurrentDistance(currentLatitude, currentLongitude)
+    }
+
+    fun getLatitude(): MutableLiveData<Double> {
+        return latitude
+    }
+
+    fun getLongitude(): MutableLiveData<Double> {
+        return longitude
+    }
+
+    fun getAddress(): MutableLiveData<String> {
+        return address
+    }
+
+    fun getLabel(): MutableLiveData<String> {
+        return label
+    }
+
+    fun getDistance(): MutableLiveData<Float> {
+        return distance
     }
 }

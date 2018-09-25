@@ -10,6 +10,7 @@ import android.databinding.DataBindingUtil
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import com.google.android.gms.location.*
@@ -17,6 +18,7 @@ import com.toldas.sampleapplication.R
 import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.databinding.ActivityMainBinding
 import com.toldas.sampleapplication.ui.base.BaseActivity
+import com.toldas.sampleapplication.ui.edit.EditFragment
 import com.toldas.sampleapplication.ui.listeners.ItemClickListener
 import com.toldas.sampleapplication.utils.PermissionUtils
 import io.realm.RealmResults
@@ -73,7 +75,9 @@ class MainActivity : BaseActivity() {
             }
 
             override fun onEditClick(item: MapLocation) {
-
+                val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+                val fragment = EditFragment().newInstance(item)
+                fragment.show(transaction, "EDIT")
             }
         }
         adapter = LocationAdapter(onClickListener)

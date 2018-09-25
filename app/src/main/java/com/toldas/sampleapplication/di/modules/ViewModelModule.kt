@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.toldas.sampleapplication.di.annotations.ViewModelKey
 import com.toldas.sampleapplication.di.factory.ViewModelFactory
+import com.toldas.sampleapplication.ui.edit.EditViewModel
 import com.toldas.sampleapplication.ui.main.MainActivityViewModel
 import dagger.Binds
 import dagger.Module
@@ -12,6 +13,11 @@ import dagger.multibindings.IntoMap
 
 @Module
 abstract class ViewModelModule {
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditViewModel::class)
+    abstract fun bindEditFragmentViewModel(editViewModel: EditViewModel): ViewModel
 
     @Binds
     @IntoMap

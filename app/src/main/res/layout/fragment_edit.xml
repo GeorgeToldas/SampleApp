@@ -9,260 +9,272 @@
             type="com.toldas.sampleapplication.ui.edit.EditViewModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapView"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent">
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/grayLight"
-            app:layout_constraintTop_toBottomOf="@id/mapView" />
-
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_margin="20dp"
-            android:elevation="10dp"
-            app:cardBackgroundColor="@color/grayLight"
-            app:cardCornerRadius="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view">
-
-            <android.support.constraint.ConstraintLayout
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="200dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/mapLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="15dp"
-                    android:gravity="center"
-                    android:text="@string/label"
-                    android:textAlignment="center"
-                    android:textColor="@color/gray"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/latitudeTextView" />
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/grayLight"
+                app:layout_constraintTop_toBottomOf="@id/mapView" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/textInputLayout"
+            <android.support.v7.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="20dp"
+                android:elevation="10dp"
+                app:cardBackgroundColor="@color/grayLight"
+                app:cardCornerRadius="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view">
+
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="10dp"
-                    app:hintEnabled="false"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/mapLabel">
+                    android:layout_height="match_parent">
 
-                    <android.support.v7.widget.AppCompatEditText
-                        android:id="@+id/mapLabelEditText"
+                    <TextView
+                        android:id="@+id/mapLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="15dp"
+                        android:gravity="center"
+                        android:text="@string/label"
+                        android:textAlignment="center"
+                        android:textColor="@color/gray"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/latitudeTextView" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/textInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:textColor="@color/navy"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="10dp"
+                        app:hintEnabled="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/mapLabel">
+
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/mapLabelEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:text="@{viewModel.label}"
+                            android:textColor="@color/navy"
+                            android:textSize="12sp"
+                            tools:text="Home" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@color/gray"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+
+                    <TextView
+                        android:id="@+id/addressLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="@string/address"
+                        android:textAlignment="center"
+                        android:textColor="@color/gray"
                         android:textSize="12sp"
-                        tools:text="Home" />
-                </android.support.design.widget.TextInputLayout>
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/view2" />
 
-                <View
-                    android:id="@+id/view2"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@color/gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
-
-                <TextView
-                    android:id="@+id/addressLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:text="@string/address"
-                    android:textAlignment="center"
-                    android:textColor="@color/gray"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/view2" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/textInputLayout2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="10dp"
-                    app:hintEnabled="false"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/addressLabel">
-
-                    <android.support.v7.widget.AppCompatEditText
-                        android:id="@+id/addressEditText"
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/textInputLayout2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:inputType="textMultiLine"
-                        android:maxLines="2"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="10dp"
+                        app:hintEnabled="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/addressLabel">
+
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/addressEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:inputType="textMultiLine"
+                            android:maxLines="2"
+                            android:text="@{viewModel.address}"
+                            android:textColor="@color/navy"
+                            android:textSize="12sp"
+                            tools:text="Strada Piața Cetății nr. 28" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <View
+                        android:id="@+id/view3"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@color/gray"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
+
+                    <TextView
+                        android:id="@+id/latitudeView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:drawableStart="@drawable/ic_latitude_18dp"
+                        android:drawablePadding="5dp"
+                        android:text="@string/latitude"
                         android:textColor="@color/navy"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toStartOf="@id/distanceView"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/longitudeView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:drawableStart="@drawable/ic_longitude_18dp"
+                        android:drawablePadding="5dp"
+                        android:text="@string/longitude"
+                        android:textColor="@color/navy"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/distanceView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/distanceView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:drawableStart="@drawable/ic_distance_18px"
+                        android:drawablePadding="5dp"
+                        android:text="@string/distance"
+                        android:textColor="@color/navy"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toStartOf="@id/longitudeView"
+                        app:layout_constraintStart_toEndOf="@id/latitudeView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/latitudeTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:textSize="12sp"
-                        tools:text="Strada Piața Cetății nr. 28" />
-                </android.support.design.widget.TextInputLayout>
+                        coordinates="@{viewModel.getLatitude()}"
+                        app:layout_constraintEnd_toEndOf="@+id/latitudeView"
+                        app:layout_constraintStart_toStartOf="@id/latitudeView"
+                        app:layout_constraintTop_toBottomOf="@+id/latitudeView"
+                        tools:text="47.050164" />
 
-                <View
-                    android:id="@+id/view3"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@color/gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
+                    <TextView
+                        android:id="@+id/longitudeTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textSize="12sp"
+                        coordinates="@{viewModel.getLongitude()}"
+                        app:layout_constraintEnd_toEndOf="@id/longitudeView"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="@+id/longitudeView"
+                        app:layout_constraintTop_toBottomOf="@+id/longitudeView"
+                        tools:text="21.936367" />
 
-                <TextView
-                    android:id="@+id/latitudeView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:drawableStart="@drawable/ic_latitude_18dp"
-                    android:drawablePadding="5dp"
-                    android:text="@string/latitude"
-                    android:textColor="@color/navy"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@id/distanceView"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/distanceTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/distanceView"
+                        app:locationDistanceShort="@{viewModel.getDistance()}"
+                        tools:text="132.45 km" />
 
-                <TextView
-                    android:id="@+id/longitudeView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:drawableStart="@drawable/ic_longitude_18dp"
-                    android:drawablePadding="5dp"
-                    android:text="@string/longitude"
-                    android:textColor="@color/navy"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/distanceView"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/closeButton"
+                        android:layout_width="60dp"
+                        android:layout_height="25dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/round_button"
+                        android:gravity="center"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:text="@string/close_button"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    android:id="@+id/distanceView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:drawableStart="@drawable/ic_distance_18px"
-                    android:drawablePadding="5dp"
-                    android:text="@string/distance"
-                    android:textColor="@color/navy"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@id/longitudeView"
-                    app:layout_constraintStart_toEndOf="@id/latitudeView"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/saveButton"
+                        android:layout_width="60dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/round_button"
+                        android:backgroundTint="@android:color/holo_blue_dark"
+                        android:gravity="center"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:text="@string/save_button"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
-                <TextView
-                    android:id="@+id/latitudeTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@+id/latitudeView"
-                    app:layout_constraintStart_toStartOf="@id/latitudeView"
-                    app:layout_constraintTop_toBottomOf="@+id/latitudeView"
-                    tools:text="47.050164" />
-
-                <TextView
-                    android:id="@+id/longitudeTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@id/longitudeView"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="@+id/longitudeView"
-                    app:layout_constraintTop_toBottomOf="@+id/longitudeView"
-                    tools:text="21.936367" />
-
-                <TextView
-                    android:id="@+id/distanceTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/distanceView"
-                    tools:text="132.45 km" />
-
-                <TextView
-                    android:id="@+id/closeButton"
-                    android:layout_width="60dp"
-                    android:layout_height="25dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/round_button"
-                    android:gravity="center"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
-                    android:text="@string/close_button"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:id="@+id/saveButton"
-                    android:layout_width="60dp"
-                    android:layout_height="25dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/round_button"
-                    android:backgroundTint="@android:color/holo_blue_dark"
-                    android:gravity="center"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
-                    android:text="@string/save_button"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-            </android.support.constraint.ConstraintLayout>
+                </android.support.constraint.ConstraintLayout>
 
 
-        </android.support.v7.widget.CardView>
+            </android.support.v7.widget.CardView>
 
 
-    </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+
+    </RelativeLayout>
 
 
 </layout>
