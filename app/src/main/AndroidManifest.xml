@@ -21,11 +21,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC9Ro9qwYJPXuZ7pbj5hlBHLHmku7tW8YU"/>
 
-        <service
-            android:name=".FetchAddressIntentService"
-            android:exported="false"/>
-
-
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
