@@ -30,6 +30,7 @@ abstract class BaseDialogFragment : DialogFragment(), Injectable {
         dialog.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         dialog.window.statusBarColor = ContextCompat.getColor(context!!, R.color.navy)
         setStyle(DialogFragment.STYLE_NO_FRAME, android.R.style.Theme)
+        setUp()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -37,4 +38,6 @@ abstract class BaseDialogFragment : DialogFragment(), Injectable {
         dialog.window
                 .attributes.windowAnimations = R.style.DialogAnimation
     }
+
+    abstract fun setUp()
 }

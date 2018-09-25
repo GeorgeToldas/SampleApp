@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
+import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
@@ -26,6 +27,7 @@ import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.databinding.FragmentEditBinding
 import com.toldas.sampleapplication.ui.base.BaseDialogFragment
 import com.toldas.sampleapplication.utils.PermissionUtils
+import java.util.*
 import javax.inject.Inject
 
 class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
@@ -66,6 +68,7 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         setStyle(STYLE_NO_FRAME, android.R.style.Theme_Holo_Light)
     }
 
+    @SuppressLint("CheckResult")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -76,13 +79,34 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         viewModel.bind(mapLocation)
         binding.mapView.onCreate(savedInstanceState)
         binding.mapView.getMapAsync(this)
-        initLocationServices()
 
+        return binding.root
+    }
+
+
+    override fun setUp() {
+        initLocationServices()
         viewModel.getDistance().observe(this, Observer<Float> { })
         viewModel.getLatitude().observe(this, Observer<Double> { })
         viewModel.getLongitude().observe(this, Observer<Double> { })
         viewModel.getLabel().observe(this, Observer<String> { currentMarker?.title = viewModel.getLabel().value })
-        return binding.root
+        viewModel.getAddress().observe(this, Observer<String> { currentMarker?.snippet = viewModel.getAddress().value })
+
+
+    }
+
+    private fun getAddressFromLocation(latitude: Double, longitude: Double): String {
+        val geoCoder = Geocoder(this.activity, Locale.ENGLISH)
+        val addresses = geoCoder.getFromLocation(latitude, longitude, 1)
+        if (addresses.size > 0) {
+            val address = addresses[0]
+            val streetAddress = StringBuilder()
+            for (i in 0..address.maxAddressLineIndex) {
+                streetAddress.append(address.getAddressLine(i) + " ")
+            }
+            return streetAddress.toString()
+        }
+        return ""
     }
 
     private fun initLocationServices() {
@@ -117,7 +141,8 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         googleMap?.setOnMapClickListener(this)
         currentMarker = googleMap?.addMarker(MarkerOptions()
                 .position(LatLng(mapLocation.latitude, mapLocation.longitude))
-                .title(mapLocation.label))
+                .title(mapLocation.label)
+                .snippet(mapLocation.address))
         moveCamera(mapLocation.latitude, mapLocation.longitude)
     }
 
@@ -138,6 +163,7 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         viewModel.updateLocation(point!!.latitude, point.longitude, currentLocation.latitude, currentLocation.longitude)
         currentMarker?.position = LatLng(point.latitude, point.longitude)
         moveCamera(point.latitude, point.longitude)
+        viewModel.updateAddress(getAddressFromLocation(point.latitude, point.longitude))
     }
 
     override fun onStart() {

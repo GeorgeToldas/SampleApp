@@ -21,7 +21,8 @@
             <com.google.android.gms.maps.MapView
                 android:id="@+id/mapView"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="250dp"
+                app:layout_constraintBottom_toTopOf="@id/view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -83,6 +84,7 @@
                             android:inputType="text"
                             android:maxLines="1"
                             android:text="@{viewModel.label}"
+                            android:afterTextChanged="@{viewModel::updateLabel}"
                             android:textColor="@color/navy"
                             android:textSize="12sp"
                             tools:text="Home" />

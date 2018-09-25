@@ -35,6 +35,7 @@ dependencies {
     //Google Services
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.google.android.gms:play-services-places:15.0.1'
 
     //Dependencies Injection
     implementation 'com.jakewharton:butterknife:8.8.1'

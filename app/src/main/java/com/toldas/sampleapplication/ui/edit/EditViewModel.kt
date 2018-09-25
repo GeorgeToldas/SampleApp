@@ -1,6 +1,7 @@
 package com.toldas.sampleapplication.ui.edit
 
 import android.arch.lifecycle.MutableLiveData
+import android.text.Editable
 import com.toldas.sampleapplication.data.api.ApiService
 import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.rx.schedulers.SchedulerProvider
@@ -37,6 +38,14 @@ class EditViewModel
 
     fun updateCurrentDistance(latitude: Double, longitude: Double) {
         distance.value = LocationUtils.setDistance(this.latitude.value!!, this.longitude.value!!, latitude, longitude)
+    }
+
+    fun updateLabel(text: Editable) {
+        label.value = text.toString()
+    }
+
+    fun updateAddress(text: String) {
+        address.value = text
     }
 
     fun updateLocation(latitude: Double, longitude: Double, currentLatitude: Double, currentLongitude: Double) {
