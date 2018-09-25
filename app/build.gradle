@@ -27,18 +27,6 @@ android {
         enabled = true
     }
 
-    flavorDimensions "client"
-    productFlavors {
-        demo {
-            dimension "client"
-            applicationIdSuffix ".demo"
-        }
-        full {
-            dimension "client"
-            applicationIdSuffix ".full"
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled true
@@ -61,8 +49,4 @@ android {
         }
     }
 
-}
-
-dependencies {
-    implementation 'com.android.support:support-v4:27.+'
 }
