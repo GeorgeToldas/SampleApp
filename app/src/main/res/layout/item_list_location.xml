@@ -26,7 +26,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/homeLabel"
+                android:id="@+id/mapLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -53,7 +53,7 @@
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/homeLabel"
+                app:layout_constraintTop_toBottomOf="@+id/mapLabel"
                 app:locationDistance="@{viewModel.getDistance()}"
                 tools:text="5 km Away" />
 

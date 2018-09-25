@@ -3,4 +3,12 @@
     <string name="gps_not_enabled">GPS is not enabled. Please turn it on in the device settings.</string>
     <string name="open_settings">Open Settings</string>
     <string name="cancel_button">Cancel</string>
+
+    <string name="distance">Distance</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="label">Label</string>
+    <string name="address">Address</string>
+    <string name="close_button">Close</string>
+    <string name="save_button">Save</string>
 </resources>
