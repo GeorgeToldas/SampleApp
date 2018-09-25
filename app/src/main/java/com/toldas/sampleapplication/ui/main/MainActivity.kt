@@ -99,7 +99,12 @@ class MainActivity : BaseActivity() {
         }
         adapter = LocationAdapter(onClickListener)
         binding.locationRecyclerView.adapter = adapter
-        viewModel.getLocationList().observe(this, Observer<RealmResults<MapLocation>> { locations -> adapter.setList(locations) })
+        viewModel.getLocationList().observe(this, Observer<RealmResults<MapLocation>> { locations ->
+            run {
+                adapter.setList(locations)
+                runOnUiThread { adapter.notifyDataSetChanged() }
+            }
+        })
 
 
     }
@@ -108,8 +113,8 @@ class MainActivity : BaseActivity() {
     private fun setLocationProvider() {
         locationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest.create()
-                .setInterval(60000)
-                .setFastestInterval(60000)
+                .setInterval(20000) // 20 seconds
+                .setFastestInterval(20000)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
         locationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
     }

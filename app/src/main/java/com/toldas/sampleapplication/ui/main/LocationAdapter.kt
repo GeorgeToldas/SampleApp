@@ -14,7 +14,7 @@ class LocationAdapter(
         val onClickListener: ItemClickListener<MapLocation>
 ) : RecyclerView.Adapter<LocationAdapter.ViewHolder>() {
 
-    private var locations: List<MapLocation>? = null
+    private var locations: ArrayList<MapLocation> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemListLocationBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_list_location, parent, false)
@@ -22,20 +22,15 @@ class LocationAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(locations!![position])
+        holder.bind(locations[position])
     }
 
     override fun getItemCount(): Int {
-        return if (locations == null) {
-            0
-        } else {
-            locations!!.size
-        }
+        return locations.size
     }
 
     fun setList(data: List<MapLocation>?) {
-        locations = data
-        notifyDataSetChanged()
+        locations = ArrayList(data)
     }
 
     @Suppress("CheckResult")
