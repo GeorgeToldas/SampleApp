@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.text.Editable
 import com.toldas.sampleapplication.data.api.ApiService
 import com.toldas.sampleapplication.data.model.MapLocation
+import com.toldas.sampleapplication.db.locationModel
 import com.toldas.sampleapplication.rx.schedulers.SchedulerProvider
 import com.toldas.sampleapplication.ui.base.BaseViewModel
 import com.toldas.sampleapplication.utils.LocationUtils
@@ -40,18 +41,23 @@ class EditViewModel
         distance.value = LocationUtils.setDistance(this.latitude.value!!, this.longitude.value!!, latitude, longitude)
     }
 
+    fun updateLocation(latitude: Double, longitude: Double, currentLatitude: Double, currentLongitude: Double) {
+        this.latitude.value = latitude
+        this.longitude.value = longitude
+        updateCurrentDistance(currentLatitude, currentLongitude)
+    }
+
+    fun saveLocation() {
+        realmDb.locationModel().updateItem(
+                id.value!!, latitude.value!!, longitude.value!!, label.value!!, address.value!!, distance.value!!)
+    }
+
     fun updateLabel(text: Editable) {
         label.value = text.toString()
     }
 
     fun updateAddress(text: String) {
         address.value = text
-    }
-
-    fun updateLocation(latitude: Double, longitude: Double, currentLatitude: Double, currentLongitude: Double) {
-        this.latitude.value = latitude
-        this.longitude.value = longitude
-        updateCurrentDistance(currentLatitude, currentLongitude)
     }
 
     fun getLatitude(): MutableLiveData<Double> {

@@ -8,6 +8,25 @@ import io.realm.RealmResults
 
 class LocationDao(val realm: Realm) {
 
+    fun updateItem(
+            id: Long,
+            latitude: Double,
+            longitude: Double,
+            label: String,
+            address: String,
+            distance: Float
+    ) {
+        Realm.getInstance(realm.configuration)
+                .executeTransaction { realm ->
+                    val realmObject = realm.where(MapLocation::class.java).equalTo("id", id).findFirst()
+                    realmObject?.latitude = latitude
+                    realmObject?.longitude = longitude
+                    realmObject?.label = label
+                    realmObject?.address = address
+                    realmObject?.distance = distance
+                }
+    }
+
     fun insertLocations(list: List<MapLocation>) {
         Realm.getInstance(realm.configuration)
                 .executeTransaction { realm ->
@@ -22,7 +41,7 @@ class LocationDao(val realm: Realm) {
                 .executeTransaction { realm ->
                     val realmData = realm.where(MapLocation::class.java).findAllAsync()
                     for (realmObject in realmData) {
-                        realmObject.distance = LocationUtils.setDistance(realmObject.latitude,realmObject.longitude, latitude, longitude)
+                        realmObject.distance = LocationUtils.setDistance(realmObject.latitude, realmObject.longitude, latitude, longitude)
                     }
                 }
     }

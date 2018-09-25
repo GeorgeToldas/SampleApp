@@ -22,11 +22,13 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.jakewharton.rxbinding2.view.RxView
 import com.toldas.sampleapplication.R
 import com.toldas.sampleapplication.data.model.MapLocation
 import com.toldas.sampleapplication.databinding.FragmentEditBinding
 import com.toldas.sampleapplication.ui.base.BaseDialogFragment
 import com.toldas.sampleapplication.utils.PermissionUtils
+import java.io.IOException
 import java.util.*
 import javax.inject.Inject
 
@@ -44,7 +46,7 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-    private lateinit var currentLocation: Location
+    private var currentLocation: Location? = null
 
     companion object {
         private const val OBJECT = "ID"
@@ -84,6 +86,7 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
     }
 
 
+    @SuppressLint("CheckResult")
     override fun setUp() {
         initLocationServices()
         viewModel.getDistance().observe(this, Observer<Float> { })
@@ -92,20 +95,34 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         viewModel.getLabel().observe(this, Observer<String> { currentMarker?.title = viewModel.getLabel().value })
         viewModel.getAddress().observe(this, Observer<String> { currentMarker?.snippet = viewModel.getAddress().value })
 
+        RxView.clicks(binding.closeButton)
+                .subscribe { dialog.dismiss() }
 
+        RxView.clicks(binding.saveButton)
+                .subscribe {
+                    run {
+                        viewModel.saveLocation()
+                        dismiss()
+                    }
+                }
     }
 
     private fun getAddressFromLocation(latitude: Double, longitude: Double): String {
-        val geoCoder = Geocoder(this.activity, Locale.ENGLISH)
-        val addresses = geoCoder.getFromLocation(latitude, longitude, 1)
-        if (addresses.size > 0) {
-            val address = addresses[0]
-            val streetAddress = StringBuilder()
-            for (i in 0..address.maxAddressLineIndex) {
-                streetAddress.append(address.getAddressLine(i) + " ")
+        try {
+            val geoCoder = Geocoder(this.activity, Locale.ENGLISH)
+            val addresses = geoCoder.getFromLocation(latitude, longitude, 1)
+            if (addresses.size > 0) {
+                val address = addresses[0]
+                val streetAddress = StringBuilder()
+                for (i in 0..address.maxAddressLineIndex) {
+                    streetAddress.append(address.getAddressLine(i) + " ")
+                }
+                return streetAddress.toString()
             }
-            return streetAddress.toString()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
+
         return ""
     }
 
@@ -113,7 +130,7 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 currentLocation = locationResult.lastLocation
-                viewModel.updateCurrentDistance(currentLocation.latitude, currentLocation.longitude)
+                viewModel.updateCurrentDistance(currentLocation!!.latitude, currentLocation!!.longitude)
             }
         }
         hasLocationPermission = PermissionUtils.checkLocationSettings(context!!)
@@ -160,7 +177,10 @@ class EditFragment : BaseDialogFragment(), OnMapReadyCallback, GoogleMap.OnMapCl
     }
 
     override fun onMapClick(point: LatLng?) {
-        viewModel.updateLocation(point!!.latitude, point.longitude, currentLocation.latitude, currentLocation.longitude)
+        if (currentLocation == null) {
+            return
+        }
+        viewModel.updateLocation(point!!.latitude, point.longitude, currentLocation!!.latitude, currentLocation!!.longitude)
         currentMarker?.position = LatLng(point.latitude, point.longitude)
         moveCamera(point.latitude, point.longitude)
         viewModel.updateAddress(getAddressFromLocation(point.latitude, point.longitude))
