@@ -42,9 +42,8 @@ android {
         applicationVariants.all { variant ->
             variant.outputs.all {
                 def buildTypeName = variant.buildType.name
-                def flavorTypeName = variant.flavorName
                 outputFileName =
-                        "Sample Application-${flavorTypeName}-${buildTypeName}-v${variant.versionName}(${android.defaultConfig.versionCode}).apk"
+                        "MyLocations-${buildTypeName}-v${variant.versionName}(${android.defaultConfig.versionCode}).apk"
             }
         }
     }
