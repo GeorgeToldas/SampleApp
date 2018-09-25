@@ -38,6 +38,7 @@ class LocationAdapter(
         notifyDataSetChanged()
     }
 
+    @Suppress("CheckResult")
     inner class ViewHolder(
             private val binding: ItemListLocationBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -47,9 +48,12 @@ class LocationAdapter(
 
         init {
 
-            @Suppress("Unused")
             RxView.clicks(itemView)
-                    .subscribe { _ -> onClickListener.onClick(item) }
+                    .subscribe { _ -> onClickListener.onItemClick(item) }
+            RxView.clicks(binding.editButton)
+                    .subscribe { _ -> onClickListener.onEditClick(item) }
+            RxView.clicks(binding.deleteButton)
+                    .subscribe { _ -> onClickListener.onDeleteClick(item) }
         }
 
         fun bind(item: MapLocation) {

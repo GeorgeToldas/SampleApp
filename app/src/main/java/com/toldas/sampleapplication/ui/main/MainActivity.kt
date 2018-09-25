@@ -64,7 +64,15 @@ class MainActivity : BaseActivity() {
     private fun initAdapter() {
         binding.locationRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         val onClickListener = object : ItemClickListener<MapLocation> {
-            override fun onClick(item: MapLocation) {
+            override fun onItemClick(item: MapLocation) {
+                
+            }
+
+            override fun onDeleteClick(item: MapLocation) {
+                viewModel.deleteLocation(item)
+            }
+
+            override fun onEditClick(item: MapLocation) {
 
             }
         }

@@ -28,6 +28,14 @@ class LocationDao(val realm: Realm) {
 
     }
 
+    fun removeLocation(id: Long) {
+        Realm.getInstance(realm.configuration)
+                .executeTransaction { realm ->
+                    val realmObject = realm.where(MapLocation::class.java).equalTo("id", id).findFirst()
+                    realmObject?.deleteFromRealm()
+                }
+    }
+
     fun getLocations(): LiveData<RealmResults<MapLocation>> {
         return realm.where(MapLocation::class.java).findAllAsync().asLiveData()
     }

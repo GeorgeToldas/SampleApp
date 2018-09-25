@@ -62,6 +62,10 @@ class MainActivityViewModel
         loadingVisibility.value = View.GONE
     }
 
+    fun deleteLocation(mapLocation: MapLocation) {
+        realmDb.locationModel().removeLocation(mapLocation.id)
+    }
+
     fun updateLocationList(latitude: Double, longitude: Double) {
         realmDb.locationModel().updateLocationDistance(latitude, longitude)
     }

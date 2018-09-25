@@ -3,8 +3,11 @@ package com.toldas.sampleapplication.data.model
 import android.os.Parcel
 import android.os.Parcelable
 import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import java.util.*
 
 open class MapLocation(
+        @PrimaryKey var id: Long = UUID.randomUUID().mostSignificantBits,
         var latitude: Double = 0.0,
         var longitude: Double = 0.0,
         var address: String = "",
@@ -13,6 +16,7 @@ open class MapLocation(
 ) : RealmObject(), Parcelable {
 
     constructor(parcel: Parcel) : this(
+            parcel.readLong(),
             parcel.readDouble(),
             parcel.readDouble(),
             parcel.readString(),
@@ -21,6 +25,7 @@ open class MapLocation(
     )
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeLong(id)
         dest.writeDouble(latitude)
         dest.writeDouble(longitude)
         dest.writeString(address)
